@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 
-st.set_page_config(page_title="Reclama no Ponto", page_icon="🚌", layout="centered")
+st.set_page_config(page_title="Reclame no Ponto", page_icon="🚌", layout="centered")
 
 # ── ESTADO DA SESSÃO ─────────────────────────────────────
 if 'minhas_reclamacoes' not in st.session_state:
