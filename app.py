@@ -26,7 +26,6 @@ if 'forum_apoios'    not in st.session_state: st.session_state.forum_apoios    =
 if 'forum_coments'   not in st.session_state: st.session_state.forum_coments   = {}
 if 'forum_expandido' not in st.session_state: st.session_state.forum_expandido = None
 
-# ── DADOS ────────────────────────────────────────────────
 categorias = {
     "⏱️ Operacional":    {"foco": "Cumprimento de metas",   "exemplo": "Atrasos e furos de escala.",                     "cor": "#3b82f6"},
     "🔧 Estrutural":     {"foco": "Estado do veículo",       "exemplo": "Elevador quebrado ou falta de ar-condicionado.", "cor": "#f59e0b"},
@@ -66,66 +65,102 @@ st.markdown("""
 * { font-family: 'Nunito', sans-serif !important; box-sizing: border-box; }
 .stApp { background-color: #f0f4ff !important; }
 #MainMenu, footer, header { visibility: hidden !important; }
-.block-container { padding-top: 0.5rem !important; padding-bottom: 1.5rem !important; max-width: 480px !important; margin: 0 auto !important; }
 
-/* ── TABS — estilo de barra de navegação ── */
-[data-testid="stTabs"] { background: white; border-radius: 0 0 18px 18px; box-shadow: 0 4px 16px rgba(30,86,219,0.10); margin-bottom: 18px; position: sticky; top: 0; z-index: 100; }
-[data-testid="stTabList"] { background: white !important; border-bottom: 2px solid #e8eeff !important; padding: 6px 6px 0 6px !important; gap: 4px !important; }
+.block-container {
+    padding-top: 0.8rem !important;
+    padding-bottom: 100px !important;   /* espaço para a nav no rodapé */
+    max-width: 480px !important;
+    margin: 0 auto !important;
+}
+
+/* ════════════════════════════════════════
+   TABS NO RODAPÉ — move a barra para baixo
+   ════════════════════════════════════════ */
+[data-testid="stTabs"] {
+    display: flex;
+    flex-direction: column-reverse;   /* conteúdo em cima, barra embaixo */
+}
+[data-testid="stTabList"] {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    background: white !important;
+    border-top: 2px solid #e8eeff !important;
+    border-bottom: none !important;
+    box-shadow: 0 -4px 20px rgba(30,86,219,0.13) !important;
+    padding: 4px 6px 14px 6px !important;
+    gap: 4px !important;
+    justify-content: space-around !important;
+}
+/* Cada tab */
 button[data-baseweb="tab"] {
     flex: 1 !important;
-    font-size: 0.78rem !important;
+    font-size: 0.7rem !important;
     font-weight: 900 !important;
     color: #94a3b8 !important;
     background: transparent !important;
     border: none !important;
-    border-radius: 12px 12px 0 0 !important;
-    padding: 10px 4px 10px 4px !important;
-    min-height: 56px !important;
-    display: flex !important; flex-direction: column !important;
-    align-items: center !important; justify-content: center !important;
+    border-radius: 12px !important;
+    padding: 8px 4px !important;
+    min-height: 54px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
     gap: 3px !important;
     transition: all .15s !important;
+    white-space: pre-line !important;
 }
-button[data-baseweb="tab"]:hover { background: #f0f4ff !important; color: #1a56db !important; }
+button[data-baseweb="tab"]:hover,
+button[data-baseweb="tab"]:active {
+    background: #eef2ff !important;
+    color: #1a56db !important;
+}
 button[data-baseweb="tab"][aria-selected="true"] {
     background: #eef2ff !important;
     color: #1a56db !important;
-    border-bottom: 3px solid #1a56db !important;
+    border-bottom: none !important;
+    border-top: 3px solid #1a56db !important;
 }
+/* Remove o indicador padrão do Streamlit */
+[data-testid="stTabList"] > div[role="presentation"] { display: none !important; }
 [data-testid="stTabPanel"] { padding: 0 !important; }
 
 /* ── TEXTOS ── */
 h1, h2, h3 { color: #1a56db !important; text-align: center; }
-label, p, [data-testid="stWidgetLabel"] p, .stMarkdown p { color: #1e293b !important; font-weight: 700 !important; }
+label, p, [data-testid="stWidgetLabel"] p, .stMarkdown p {
+    color: #1e293b !important; font-weight: 700 !important;
+}
 
 /* ── INPUTS ── */
 div[data-baseweb="select"]>div, input[type="text"], textarea {
     background: #fff !important; color: #1e293b !important;
-    border: 2px solid #c7d7fc !important; border-radius: 14px !important; font-size: .95rem !important;
+    border: 2px solid #c7d7fc !important; border-radius: 14px !important;
+    font-size: .95rem !important;
 }
 input, textarea { color: #1e293b !important; -webkit-text-fill-color: #1e293b !important; }
 
-/* ── UPLOAD corrigido ── */
+/* ── UPLOAD ── */
 [data-testid="stFileUploaderDropzone"] {
     background: white !important;
     border: 2px dashed #1a56db !important;
     border-radius: 14px !important;
 }
-[data-testid="stFileUploaderDropzone"] section > div { background: white !important; }
 
 /* ── BOTÕES ── */
 .stButton > button {
-    border-radius: 50px !important; font-size: .9rem !important; font-weight: 800 !important;
-    height: 2.6em !important; width: 100% !important;
+    border-radius: 50px !important; font-size: .9rem !important;
+    font-weight: 800 !important; height: 2.6em !important; width: 100% !important;
     border: 1.5px solid #e8eeff !important; background: #f8faff !important; color: #334155 !important;
 }
 .stButton > button:hover { background: #eef2ff !important; color: #1a56db !important; }
-
 .btn-enviar .stButton > button {
     background: linear-gradient(135deg,#1a56db,#3b82f6) !important;
-    color: white !important; border: none !important; height: 3.2em !important;
-    font-size: 1rem !important; box-shadow: 0 4px 18px rgba(26,86,219,.35) !important;
-    margin-top: 6px !important;
+    color: white !important; border: none !important;
+    height: 3.2em !important; font-size: 1rem !important;
+    box-shadow: 0 4px 18px rgba(26,86,219,.35) !important; margin-top: 6px !important;
 }
 .btn-voltar .stButton > button { background: #eef2ff !important; color: #1a56db !important; border: none !important; }
 
@@ -141,12 +176,19 @@ input, textarea { color: #1e293b !important; -webkit-text-fill-color: #1e293b !i
 .card { background: white; padding: 16px 18px; border-radius: 18px; box-shadow: 0 2px 12px rgba(30,86,219,.08); border: 1px solid #e8eeff; margin-bottom: 12px; }
 .status-badge { padding: 4px 12px; border-radius: 20px; font-size: .78rem; font-weight: 900; color: white; display: inline-block; }
 .detalhe-box { background: #f8faff; border-radius: 13px; padding: 14px 16px; margin-top: 11px; border: 1px solid #dbe8ff; }
+.detalhe-label { font-size: .72rem; font-weight: 900; color: #94a3b8; letter-spacing: .8px; text-transform: uppercase; margin-bottom: 8px; }
+.detalhe-placa { font-size: .88rem; font-weight: 700; color: #64748b; margin-bottom: 7px; }
+.detalhe-texto { font-size: .92rem; color: #334155; font-weight: 600; line-height: 1.6; }
 .resposta-box { background: #ecfdf5; border-radius: 13px; padding: 14px 16px; margin-top: 12px; border-left: 5px solid #10b981; }
 .resposta-titulo { font-size: .72rem; font-weight: 900; color: #059669; letter-spacing: .8px; text-transform: uppercase; margin-bottom: 7px; }
+.resposta-texto { font-size: .92rem; color: #065f46; font-weight: 600; line-height: 1.6; }
+.aguardando-box { background: #fafafa; border-radius: 12px; padding: 14px; margin-top: 12px; border: 1px dashed #cbd5e1; text-align: center; }
+.aguardando-txt { font-size: .85rem; color: #94a3b8; font-weight: 700; }
 
-.app-header { text-align: center; margin-bottom: 16px; padding-top: 10px; }
-.app-header h1 { font-size: 1.45rem !important; font-weight: 900 !important; margin: 0 !important; }
-.app-header p  { font-size: .85rem !important; color: #64748b !important; margin: 3px 0 0 !important; font-weight: 700 !important; }
+/* ── APP HEADER ── */
+.app-header { text-align: center; margin-bottom: 14px; padding-top: 4px; }
+.app-header h1 { font-size: 1.4rem !important; font-weight: 900 !important; margin: 0 !important; }
+.app-header p  { font-size: .82rem !important; color: #64748b !important; margin: 2px 0 0 !important; font-weight: 700 !important; }
 
 /* ── FÓRUM ── */
 .forum-card { background: white; padding: 14px 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(30,86,219,.07); border: 1px solid #e8eeff; margin-bottom: 10px; }
@@ -162,14 +204,8 @@ div[data-testid="stAlert"] { border-radius: 12px !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ════════════════════════════════════════════════════════
-# HEADER
-# ════════════════════════════════════════════════════════
 st.markdown('<div class="app-header"><h1>🚌 Reclama no Ponto</h1><p>Transporte público de Florianópolis</p></div>', unsafe_allow_html=True)
 
-# ════════════════════════════════════════════════════════
-# TABS — navegação nativa do Streamlit (100% funcional)
-# ════════════════════════════════════════════════════════
 tab1, tab2, tab3 = st.tabs(["📝  Reclamar", "💬  Fórum", "🔍  Meus Chamados"])
 
 # ════════════════════════════════════════════════════════
@@ -179,12 +215,14 @@ with tab1:
     st.markdown('<div class="secao"><div class="secao-titulo">1 · Tipo do problema</div>', unsafe_allow_html=True)
     escolha_cat = st.selectbox("Categoria:", list(categorias.keys()), key="sel_cat", label_visibility="collapsed")
     ic = categorias[escolha_cat]
-    st.markdown(f"""
-    <div class="cat-card" style="background:{ic['cor']}15;border-color:{ic['cor']};">
-        <div style="font-size:.95rem;font-weight:900;color:{ic['cor']};">{escolha_cat}</div>
-        <div class="cat-foco">🎯 Foco: {ic['foco']}</div>
-        <div class="cat-exemplo">💬 Ex: {ic['exemplo']}</div>
-    </div></div>""", unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="cat-card" style="background:{ic["cor"]}15;border-color:{ic["cor"]};">'
+        f'<div style="font-size:.95rem;font-weight:900;color:{ic["cor"]};">{escolha_cat}</div>'
+        f'<div class="cat-foco">🎯 Foco: {ic["foco"]}</div>'
+        f'<div class="cat-exemplo">💬 Ex: {ic["exemplo"]}</div>'
+        f'</div></div>',
+        unsafe_allow_html=True
+    )
 
     st.markdown('<div class="secao"><div class="secao-titulo">2 · Linha do ônibus</div>', unsafe_allow_html=True)
     escolha_grupo = st.selectbox("Grupo:", list(grupos_linhas.keys()), key="sel_grupo", label_visibility="collapsed")
@@ -221,18 +259,20 @@ with tab2:
     st.markdown("<p style='text-align:center;color:#64748b;font-size:.88rem;margin-bottom:14px;'>Apoie ou comente ocorrências de outros usuários</p>", unsafe_allow_html=True)
 
     for post in FORUM_POSTS:
-        pid      = post["id"]
-        apoios   = st.session_state.forum_apoios.get(pid, 0)
-        coments  = st.session_state.forum_coments.get(pid, [])
+        pid       = post["id"]
+        apoios    = st.session_state.forum_apoios.get(pid, 0)
+        coments   = st.session_state.forum_coments.get(pid, [])
         expandido = st.session_state.forum_expandido == pid
 
-        st.markdown(f"""
-        <div class="forum-card">
-            <div class="forum-linha">Linha {post['linha']}</div>
-            <div class="forum-rota">{post['rota']}</div>
-            <div class="forum-meta">📍 {post['local']} · Há {post['tempo']} · {post['cat']}</div>
-            <div class="forum-texto">"{post['texto']}"</div>
-        </div>""", unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="forum-card">'
+            f'<div class="forum-linha">Linha {post["linha"]}</div>'
+            f'<div class="forum-rota">{post["rota"]}</div>'
+            f'<div class="forum-meta">📍 {post["local"]} · Há {post["tempo"]} · {post["cat"]}</div>'
+            f'<div class="forum-texto">"{post["texto"]}"</div>'
+            f'</div>',
+            unsafe_allow_html=True
+        )
 
         ca, cb = st.columns(2)
         with ca:
@@ -248,14 +288,19 @@ with tab2:
 
         if expandido:
             for c in coments:
-                st.markdown(f'<div class="coment-item"><div class="coment-autor">{c["autor"]}</div><div class="coment-texto">{c["texto"]}</div></div>', unsafe_allow_html=True)
-            novo_c = st.text_input("Comentário:", key=f"inp_c_{pid}", placeholder="Escreva aqui...", label_visibility="collapsed")
+                st.markdown(
+                    f'<div class="coment-item">'
+                    f'<div class="coment-autor">{c["autor"]}</div>'
+                    f'<div class="coment-texto">{c["texto"]}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
+            novo_c = st.text_input("", key=f"inp_c_{pid}", placeholder="Escreva seu comentário...")
             if st.button("✉️ Enviar comentário", key=f"send_c_{pid}"):
                 if novo_c.strip():
-                    st.session_state.forum_coments.setdefault(pid, []).append({"autor":"Você","texto":novo_c.strip()})
+                    st.session_state.forum_coments.setdefault(pid, []).append({"autor": "Você", "texto": novo_c.strip()})
                     st.session_state.forum_expandido = pid
                     st.rerun()
-
         st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════
@@ -265,42 +310,45 @@ with tab3:
     if st.session_state.rec_detalhe is not None:
         idx = st.session_state.rec_detalhe
         rec = st.session_state.minhas_reclamacoes[idx]
-        cor = "#f59e0b" if rec['status']=="Em Análise" else "#10b981" if rec['status']=="Concluído" else "#1a56db"
-        grupo_curto = rec.get('grupo','').split("(")[0].strip()
+        cor = "#f59e0b" if rec['status'] == "Em Análise" else "#10b981" if rec['status'] == "Concluído" else "#1a56db"
+        grupo_curto = rec.get('grupo', '').split("(")[0].strip()
 
         st.markdown('<div class="btn-voltar">', unsafe_allow_html=True)
-        if st.button("← Voltar para Meus Chamados", key="btn_voltar"):
+        if st.button("← Voltar", key="btn_voltar"):
             st.session_state.rec_detalhe = None
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <div class="card">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                <span style="color:#1a56db;font-weight:900;font-size:1rem;">{rec['protocolo']}</span>
-                <span class="status-badge" style="background:{cor};">{rec['status']}</span>
-            </div>
-            <div style="color:#334155;font-size:.92rem;font-weight:700;">🚌 Linha <b>{rec['linha']}</b></div>
-            <div style="color:#64748b;font-size:.82rem;font-weight:700;margin-top:3px;">{grupo_curto}</div>
-            <div style="color:#94a3b8;font-size:.82rem;font-weight:700;margin-top:5px;">{rec['cat']} · 📅 {rec['data']}</div>
-        </div>""", unsafe_allow_html=True)
+        # Card resumo
+        st.markdown(
+            f'<div class="card">'
+            f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
+            f'<span style="color:#1a56db;font-weight:900;font-size:1rem;">{rec["protocolo"]}</span>'
+            f'<span class="status-badge" style="background:{cor};">{rec["status"]}</span>'
+            f'</div>'
+            f'<div style="color:#334155;font-size:.92rem;font-weight:700;">🚌 Linha <b>{rec["linha"]}</b></div>'
+            f'<div style="color:#64748b;font-size:.82rem;font-weight:700;margin-top:3px;">{grupo_curto}</div>'
+            f'<div style="color:#94a3b8;font-size:.82rem;font-weight:700;margin-top:5px;">{rec["cat"]} · 📅 {rec["data"]}</div>'
+            f'</div>',
+            unsafe_allow_html=True
+        )
 
-        st.markdown(f"""
-        <div class="detalhe-box">
-            <div style="font-size:.72rem;font-weight:900;color:#94a3b8;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">📋 Detalhes</div>
-            {'<div style="font-size:.88rem;font-weight:700;color:#64748b;margin-bottom:7px;">🚗 Placa: ' + rec['placa'] + '</div>' if rec.get('placa') else ''}
-            <div style="font-size:.92rem;color:#334155;font-weight:600;line-height:1.6;">{rec.get('descricao','—')}</div>
-        </div>""", unsafe_allow_html=True)
+        # Detalhes — sem f-string condicional, tudo separado
+        st.markdown('<div class="detalhe-box"><div class="detalhe-label">📋 Detalhes</div>', unsafe_allow_html=True)
+        if rec.get('placa'):
+            st.markdown(f'<div class="detalhe-placa">🚗 Placa: {rec["placa"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="detalhe-texto">{rec.get("descricao", "—")}</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        resposta = rec.get('resposta','')
+        # Resposta da empresa
+        resposta = rec.get('resposta', '')
         if resposta:
-            st.markdown(f"""
-            <div class="resposta-box">
-                <div class="resposta-titulo">✅ Resposta da Empresa</div>
-                <div style="font-size:.92rem;color:#065f46;font-weight:600;line-height:1.6;">{resposta}</div>
-            </div>""", unsafe_allow_html=True)
+            st.markdown('<div class="resposta-box">', unsafe_allow_html=True)
+            st.markdown('<div class="resposta-titulo">✅ Resposta da Empresa</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="resposta-texto">{resposta}</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
         else:
-            st.markdown('<div style="background:#fafafa;border-radius:12px;padding:14px;margin-top:12px;border:1px dashed #cbd5e1;text-align:center;"><span style="font-size:.85rem;color:#94a3b8;font-weight:700;">⏳ Aguardando resposta da empresa</span></div>', unsafe_allow_html=True)
+            st.markdown('<div class="aguardando-box"><div class="aguardando-txt">⏳ Aguardando resposta da empresa</div></div>', unsafe_allow_html=True)
 
     else:
         st.markdown("<p style='text-align:center;color:#64748b;font-size:.88rem;margin-bottom:14px;'>Toque para ver os detalhes de cada chamado</p>", unsafe_allow_html=True)
@@ -310,21 +358,22 @@ with tab3:
         else:
             for i, rec in enumerate(reversed(st.session_state.minhas_reclamacoes)):
                 idx_real = len(st.session_state.minhas_reclamacoes) - 1 - i
-                cor = "#f59e0b" if rec['status']=="Em Análise" else "#10b981" if rec['status']=="Concluído" else "#1a56db"
-                grupo_curto = rec.get('grupo','').split("(")[0].strip()
+                cor = "#f59e0b" if rec['status'] == "Em Análise" else "#10b981" if rec['status'] == "Concluído" else "#1a56db"
+                grupo_curto = rec.get('grupo', '').split("(")[0].strip()
                 icone_resp  = " 💬" if rec.get('resposta') else ""
 
-                st.markdown(f"""
-                <div class="card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
-                        <span style="color:#1a56db;font-weight:900;font-size:.95rem;">{rec['protocolo']}</span>
-                        <span class="status-badge" style="background:{cor};">{rec['status']}</span>
-                    </div>
-                    <div style="color:#334155;font-size:.9rem;font-weight:700;">🚌 Linha <b>{rec['linha']}</b>{icone_resp}</div>
-                    <div style="color:#64748b;font-size:.8rem;font-weight:700;margin-top:2px;">{grupo_curto}</div>
-                    <div style="color:#94a3b8;font-size:.8rem;font-weight:700;margin-top:4px;">{rec['cat']} · 📅 {rec['data']}</div>
-                </div>""", unsafe_allow_html=True)
-
+                st.markdown(
+                    f'<div class="card">'
+                    f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">'
+                    f'<span style="color:#1a56db;font-weight:900;font-size:.95rem;">{rec["protocolo"]}</span>'
+                    f'<span class="status-badge" style="background:{cor};">{rec["status"]}</span>'
+                    f'</div>'
+                    f'<div style="color:#334155;font-size:.9rem;font-weight:700;">🚌 Linha <b>{rec["linha"]}</b>{icone_resp}</div>'
+                    f'<div style="color:#64748b;font-size:.8rem;font-weight:700;margin-top:2px;">{grupo_curto}</div>'
+                    f'<div style="color:#94a3b8;font-size:.8rem;font-weight:700;margin-top:4px;">{rec["cat"]} · 📅 {rec["data"]}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
                 if st.button("Ver detalhes →", key=f"det_{idx_real}", use_container_width=True):
                     st.session_state.rec_detalhe = idx_real
                     st.rerun()
