@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from datetime import datetime
 
 st.set_page_config(page_title="Reclama no Ponto", page_icon="🚌", layout="centered")
@@ -12,22 +11,22 @@ if 'minhas_reclamacoes' not in st.session_state:
             "linha": "135", "status": "Concluído", "data": "25/03/2026",
             "cat": "⏱️ Operacional", "placa": "ABC-1234",
             "descricao": "Ônibus atrasou mais de 40 minutos no horário das 17h.",
-            "resposta": "Identificamos falha operacional naquela escala. O motorista foi notificado e o horário reforçado a partir de 01/04/2026."
+            "resposta": "Identificamos falha operacional. O motorista foi notificado e o horário reforçado a partir de 01/04/2026."
         },
         {
             "protocolo": "#RP-2026-015", "grupo": "🔗 Troncais (Inter-terminais)",
             "linha": "231", "status": "Em Análise", "data": "27/03/2026",
             "cat": "👥 Demanda", "placa": "",
             "descricao": "Superlotação constante nos horários de pico. Passageiros ficam para trás.",
-            "resposta": "Sua reclamação está sendo avaliada. Previsão de retorno: 15/04/2026."
+            "resposta": "Reclamação em avaliação pelo setor de planejamento. Previsão: 15/04/2026."
         },
     ]
-if 'aba_ativa'       not in st.session_state: st.session_state.aba_ativa       = "reclamacao"
 if 'rec_detalhe'     not in st.session_state: st.session_state.rec_detalhe     = None
 if 'forum_apoios'    not in st.session_state: st.session_state.forum_apoios    = {}
 if 'forum_coments'   not in st.session_state: st.session_state.forum_coments   = {}
 if 'forum_expandido' not in st.session_state: st.session_state.forum_expandido = None
 
+# ── DADOS ────────────────────────────────────────────────
 categorias = {
     "⏱️ Operacional":    {"foco": "Cumprimento de metas",   "exemplo": "Atrasos e furos de escala.",                     "cor": "#3b82f6"},
     "🔧 Estrutural":     {"foco": "Estado do veículo",       "exemplo": "Elevador quebrado ou falta de ar-condicionado.", "cor": "#f59e0b"},
@@ -49,225 +48,134 @@ grupos_linhas = {
 }
 
 FORUM_POSTS = [
-    {"id":"f1","linha":"134","rota":"TITRI – TICEN via Beira-Mar",       "local":"Terminal TITRI",       "tempo":"8 min",  "cat":"⏱️ Operacional",   "texto":"Furo de viagem no horário das 7h30. Fiquei esperando 50 minutos."},
-    {"id":"f2","linha":"221","rota":"TICAN – TICEN via Mauro Ramos",      "local":"TICAN",                "tempo":"15 min", "cat":"👥 Demanda",        "texto":"Superlotação absurda todo dia às 18h. Passageiros prensados."},
-    {"id":"f3","linha":"233","rota":"TICAN – TITRI via UFSC",             "local":"UFSC",                 "tempo":"22 min", "cat":"🔧 Estrutural",    "texto":"Ar-condicionado quebrado faz dias. Calor insuportável."},
-    {"id":"f4","linha":"311","rota":"TILAG – TICEN Direto",               "local":"Lagoa da Conceição",   "tempo":"40 min", "cat":"🚨 Comportamental","texto":"Motorista xingou passageiro que pediu para diminuir a velocidade."},
-    {"id":"f5","linha":"320","rota":"TILAG – TICEN via Beira-Mar",        "local":"Av. Beira-Mar",        "tempo":"1 hora", "cat":"⏱️ Operacional",   "texto":"Linha passou com 35 min de atraso sem aviso no app."},
-    {"id":"f6","linha":"330","rota":"TILAG – TICEN via Mauro Ramos",      "local":"TICEN",                "tempo":"2 horas","cat":"👥 Demanda",        "texto":"Dois ônibus lotados seguidos, terceiro vazio depois de 40 min."},
-    {"id":"f7","linha":"333","rota":"TILAG – TITRI via Madre Benvenuta",  "local":"Madre Benvenuta",      "tempo":"3 horas","cat":"🔧 Estrutural",    "texto":"Elevador para cadeirantes não funciona há mais de uma semana."},
-    {"id":"f8","linha":"430","rota":"TIRIO – TICEN via Costeira",         "local":"Costeira do Pirajubaé","tempo":"5 horas","cat":"💳 Sistêmica",     "texto":"Cartão debitou duas vezes na mesma viagem."},
-    {"id":"f9","linha":"845","rota":"TILAG – TITRI via Córrego Grande",   "local":"Córrego Grande",       "tempo":"6 horas","cat":"⏱️ Operacional",   "texto":"Horário das 19h simplesmente não apareceu. Furo total."},
+    {"id":"f1","linha":"134","rota":"TITRI – TICEN via Beira-Mar",       "local":"Terminal TITRI",       "tempo":"8 min",  "cat":"⏱️","texto":"Furo de viagem no horário das 7h30. Fiquei esperando 50 minutos."},
+    {"id":"f2","linha":"221","rota":"TICAN – TICEN via Mauro Ramos",      "local":"TICAN",                "tempo":"15 min", "cat":"👥","texto":"Superlotação absurda todo dia às 18h. Passageiros prensados."},
+    {"id":"f3","linha":"233","rota":"TICAN – TITRI via UFSC",             "local":"UFSC",                 "tempo":"22 min", "cat":"🔧","texto":"Ar-condicionado quebrado faz dias. Calor insuportável."},
+    {"id":"f4","linha":"311","rota":"TILAG – TICEN Direto",               "local":"Lagoa da Conceição",   "tempo":"40 min", "cat":"🚨","texto":"Motorista xingou passageiro que pediu para diminuir velocidade."},
+    {"id":"f5","linha":"320","rota":"TILAG – TICEN via Beira-Mar",        "local":"Av. Beira-Mar",        "tempo":"1 hora", "cat":"⏱️","texto":"Linha passou 35 min atrasada sem aviso no app."},
+    {"id":"f6","linha":"330","rota":"TILAG – TICEN via Mauro Ramos",      "local":"TICEN",                "tempo":"2 horas","cat":"👥","texto":"Dois ônibus lotados seguidos, terceiro vazio depois de 40 min."},
+    {"id":"f7","linha":"333","rota":"TILAG – TITRI via Madre Benvenuta",  "local":"Madre Benvenuta",      "tempo":"3 horas","cat":"🔧","texto":"Elevador para cadeirantes não funciona há mais de uma semana."},
+    {"id":"f8","linha":"430","rota":"TIRIO – TICEN via Costeira",         "local":"Costeira do Pirajubaé","tempo":"5 horas","cat":"💳","texto":"Cartão debitou duas vezes na mesma viagem."},
+    {"id":"f9","linha":"845","rota":"TILAG – TITRI via Córrego Grande",   "local":"Córrego Grande",       "tempo":"6 horas","cat":"⏱️","texto":"Horário das 19h simplesmente não apareceu. Furo total."},
 ]
-
-aba = st.session_state.aba_ativa
 
 # ── CSS ──────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
-* { font-family:'Nunito',sans-serif !important; box-sizing:border-box; }
-.stApp { background-color:#f0f4ff !important; }
-#MainMenu, footer, header { visibility:hidden !important; }
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
+* { font-family: 'Nunito', sans-serif !important; box-sizing: border-box; }
+.stApp { background-color: #f0f4ff !important; }
+#MainMenu, footer, header { visibility: hidden !important; }
+.block-container { padding-top: 0.5rem !important; padding-bottom: 1.5rem !important; max-width: 480px !important; margin: 0 auto !important; }
 
-.block-container {
-    padding-top:1rem !important;
-    padding-bottom:95px !important;
-    max-width:480px !important;
-    margin:0 auto !important;
+/* ── TABS — estilo de barra de navegação ── */
+[data-testid="stTabs"] { background: white; border-radius: 0 0 18px 18px; box-shadow: 0 4px 16px rgba(30,86,219,0.10); margin-bottom: 18px; position: sticky; top: 0; z-index: 100; }
+[data-testid="stTabList"] { background: white !important; border-bottom: 2px solid #e8eeff !important; padding: 6px 6px 0 6px !important; gap: 4px !important; }
+button[data-baseweb="tab"] {
+    flex: 1 !important;
+    font-size: 0.78rem !important;
+    font-weight: 900 !important;
+    color: #94a3b8 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 10px 4px 10px 4px !important;
+    min-height: 56px !important;
+    display: flex !important; flex-direction: column !important;
+    align-items: center !important; justify-content: center !important;
+    gap: 3px !important;
+    transition: all .15s !important;
 }
-
-h1,h2,h3 { color:#1a56db !important; text-align:center; }
-label, p, [data-testid="stWidgetLabel"] p, .stMarkdown p {
-    color:#1e293b !important; font-weight:700 !important; font-size:.95rem !important;
+button[data-baseweb="tab"]:hover { background: #f0f4ff !important; color: #1a56db !important; }
+button[data-baseweb="tab"][aria-selected="true"] {
+    background: #eef2ff !important;
+    color: #1a56db !important;
+    border-bottom: 3px solid #1a56db !important;
 }
+[data-testid="stTabPanel"] { padding: 0 !important; }
 
-/* Inputs */
+/* ── TEXTOS ── */
+h1, h2, h3 { color: #1a56db !important; text-align: center; }
+label, p, [data-testid="stWidgetLabel"] p, .stMarkdown p { color: #1e293b !important; font-weight: 700 !important; }
+
+/* ── INPUTS ── */
 div[data-baseweb="select"]>div, input[type="text"], textarea {
-    background:#fff !important; color:#1e293b !important;
-    border:2px solid #c7d7fc !important; border-radius:14px !important;
-    font-size:.95rem !important;
+    background: #fff !important; color: #1e293b !important;
+    border: 2px solid #c7d7fc !important; border-radius: 14px !important; font-size: .95rem !important;
 }
-input, textarea { color:#1e293b !important; -webkit-text-fill-color:#1e293b !important; }
+input, textarea { color: #1e293b !important; -webkit-text-fill-color: #1e293b !important; }
 
-/* UPLOAD — fix fundo e texto duplicado */
+/* ── UPLOAD corrigido ── */
 [data-testid="stFileUploaderDropzone"] {
     background: white !important;
     border: 2px dashed #1a56db !important;
     border-radius: 14px !important;
-    padding: 12px !important;
 }
-[data-testid="stFileUploaderDropzoneInstructions"] div span { display: none !important; }
-[data-testid="stFileUploaderDropzoneInstructions"]::before {
-    content: "📎 Toque para escolher uma foto";
-    font-size: .88rem;
-    color: #64748b;
-    font-weight: 700;
-    font-family: 'Nunito', sans-serif;
+[data-testid="stFileUploaderDropzone"] section > div { background: white !important; }
+
+/* ── BOTÕES ── */
+.stButton > button {
+    border-radius: 50px !important; font-size: .9rem !important; font-weight: 800 !important;
+    height: 2.6em !important; width: 100% !important;
+    border: 1.5px solid #e8eeff !important; background: #f8faff !important; color: #334155 !important;
 }
-[data-testid="stFileUploaderDropzone"] small { display: none !important; }
-[data-testid="stFileUploaderDropzone"] button[kind="secondary"] {
-    background: #1a56db !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-weight: 800 !important;
+.stButton > button:hover { background: #eef2ff !important; color: #1a56db !important; }
+
+.btn-enviar .stButton > button {
+    background: linear-gradient(135deg,#1a56db,#3b82f6) !important;
+    color: white !important; border: none !important; height: 3.2em !important;
+    font-size: 1rem !important; box-shadow: 0 4px 18px rgba(26,86,219,.35) !important;
+    margin-top: 6px !important;
 }
+.btn-voltar .stButton > button { background: #eef2ff !important; color: #1a56db !important; border: none !important; }
 
-/* Botões gerais */
-.stButton>button {
-    border-radius:50px !important; font-size:.88rem !important;
-    font-weight:800 !important; height:2.5em !important;
-    border:1.5px solid #e8eeff !important;
-    background:#f8faff !important; color:#334155 !important;
-    width:100% !important;
-}
-.stButton>button:hover { background:#eef2ff !important; color:#1a56db !important; }
+/* ── SEÇÕES ── */
+.secao { background: white; padding: 16px 18px; border-radius: 18px; box-shadow: 0 2px 12px rgba(30,86,219,.08); border: 1px solid #e8eeff; margin-bottom: 14px; }
+.secao-titulo { font-size: .72rem; font-weight: 900; color: #94a3b8; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px; }
+.cat-card { border-radius: 12px; padding: 12px 14px; margin-top: 10px; border-left: 5px solid; }
+.cat-foco    { font-size: .82rem; font-weight: 700; color: #475569; margin-top: 3px; }
+.cat-exemplo { font-size: .8rem; font-style: italic; color: #64748b; font-weight: 600; margin-top: 2px; }
+.grupo-desc  { background: #eef2ff; border-radius: 10px; padding: 9px 13px; font-size: .82rem; color: #1e3a8a !important; font-weight: 700 !important; margin: 9px 0 7px; }
 
-/* Botão enviar */
-.btn-enviar .stButton>button {
-    background:linear-gradient(135deg,#1a56db,#3b82f6) !important;
-    color:white !important; border:none !important;
-    height:3.2em !important; font-size:1rem !important;
-    box-shadow:0 4px 18px rgba(26,86,219,.35) !important;
-}
-.btn-voltar .stButton>button {
-    background:#eef2ff !important; color:#1a56db !important;
-    border:none !important; height:2.6em !important;
-}
+/* ── CARDS ── */
+.card { background: white; padding: 16px 18px; border-radius: 18px; box-shadow: 0 2px 12px rgba(30,86,219,.08); border: 1px solid #e8eeff; margin-bottom: 12px; }
+.status-badge { padding: 4px 12px; border-radius: 20px; font-size: .78rem; font-weight: 900; color: white; display: inline-block; }
+.detalhe-box { background: #f8faff; border-radius: 13px; padding: 14px 16px; margin-top: 11px; border: 1px solid #dbe8ff; }
+.resposta-box { background: #ecfdf5; border-radius: 13px; padding: 14px 16px; margin-top: 12px; border-left: 5px solid #10b981; }
+.resposta-titulo { font-size: .72rem; font-weight: 900; color: #059669; letter-spacing: .8px; text-transform: uppercase; margin-bottom: 7px; }
 
-/* Seções */
-.secao {
-    background:white; padding:16px 18px; border-radius:18px;
-    box-shadow:0 2px 12px rgba(30,86,219,.08);
-    border:1px solid #e8eeff; margin-bottom:14px;
-}
-.secao-titulo { font-size:.72rem; font-weight:900; color:#94a3b8; letter-spacing:1.2px; text-transform:uppercase; margin-bottom:10px; }
-.cat-card { border-radius:12px; padding:12px 14px; margin-top:10px; border-left:5px solid; }
-.cat-foco    { font-size:.82rem; font-weight:700; color:#475569; margin-top:3px; }
-.cat-exemplo { font-size:.8rem; font-style:italic; color:#64748b; font-weight:600; margin-top:2px; }
-.grupo-desc  { background:#eef2ff; border-radius:10px; padding:9px 13px; font-size:.82rem; color:#1e3a8a !important; font-weight:700 !important; margin:9px 0 7px; }
+.app-header { text-align: center; margin-bottom: 16px; padding-top: 10px; }
+.app-header h1 { font-size: 1.45rem !important; font-weight: 900 !important; margin: 0 !important; }
+.app-header p  { font-size: .85rem !important; color: #64748b !important; margin: 3px 0 0 !important; font-weight: 700 !important; }
 
-/* Cards */
-.card { background:white; padding:16px 18px; border-radius:18px; box-shadow:0 2px 12px rgba(30,86,219,.08); border:1px solid #e8eeff; margin-bottom:12px; }
-.status-badge { padding:4px 12px; border-radius:20px; font-size:.78rem; font-weight:900; color:white; display:inline-block; }
-.detalhe-box { background:#f8faff; border-radius:13px; padding:14px 16px; margin-top:11px; border:1px solid #dbe8ff; }
-.resposta-box { background:#ecfdf5; border-radius:13px; padding:14px 16px; margin-top:12px; border-left:5px solid #10b981; }
-.resposta-titulo { font-size:.72rem; font-weight:900; color:#059669; letter-spacing:.8px; text-transform:uppercase; margin-bottom:7px; }
+/* ── FÓRUM ── */
+.forum-card { background: white; padding: 14px 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(30,86,219,.07); border: 1px solid #e8eeff; margin-bottom: 10px; }
+.forum-linha { font-weight: 900; font-size: 1rem; color: #1a56db; }
+.forum-rota  { font-size: .8rem; color: #64748b; font-weight: 700; }
+.forum-meta  { font-size: .75rem; color: #94a3b8; margin: 3px 0 7px; font-weight: 700; }
+.forum-texto { font-size: .9rem; color: #334155; font-style: italic; font-weight: 600; margin-bottom: 10px; }
+.coment-item { background: #f8faff; border-radius: 10px; padding: 9px 13px; margin-top: 7px; }
+.coment-autor { font-weight: 900; color: #1a56db; font-size: .8rem; }
+.coment-texto { font-size: .87rem; color: #334155; font-weight: 600; }
 
-.app-header { text-align:center; margin-bottom:16px; }
-.app-header h1 { font-size:1.45rem !important; font-weight:900 !important; margin:0 !important; }
-.app-header p  { font-size:.85rem !important; color:#64748b !important; margin:3px 0 0 !important; font-weight:700 !important; }
-
-.forum-card { background:white; padding:14px 16px; border-radius:16px; box-shadow:0 2px 8px rgba(30,86,219,.07); border:1px solid #e8eeff; margin-bottom:10px; }
-.forum-linha { font-weight:900; font-size:1rem; color:#1a56db; }
-.forum-rota  { font-size:.8rem; color:#64748b; font-weight:700; }
-.forum-meta  { font-size:.75rem; color:#94a3b8; margin:3px 0 7px; font-weight:700; }
-.forum-texto { font-size:.9rem; color:#334155; font-style:italic; font-weight:600; margin-bottom:10px; }
-
-.coment-item { background:#f8faff; border-radius:10px; padding:9px 13px; margin-top:7px; }
-.coment-autor { font-weight:900; color:#1a56db; font-size:.8rem; }
-.coment-texto { font-size:.87rem; color:#334155; font-weight:600; }
-
-div[data-testid="stAlert"] { border-radius:12px !important; }
+div[data-testid="stAlert"] { border-radius: 12px !important; }
 </style>
 """, unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════
-# NAV BAR — injetada no parent.document via JS
-# Renderiza ANTES do conteúdo para garantir que o script rode
+# HEADER
 # ════════════════════════════════════════════════════════
-ativo_r = "true" if aba == "reclamacao" else "false"
-ativo_f = "true" if aba == "forum"      else "false"
-ativo_m = "true" if aba == "minhas"     else "false"
-
-components.html(f"""
-<script>
-(function() {{
-  var p = window.parent;
-
-  // Injeta fonte Nunito no parent se não existe
-  if (!p.document.getElementById('nunito-font')) {{
-    var link = p.document.createElement('link');
-    link.id = 'nunito-font';
-    link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap';
-    p.document.head.appendChild(link);
-  }}
-
-  // Remove nav anterior
-  var old = p.document.getElementById('reclama-nav');
-  if (old) old.remove();
-
-  // Cria nav bar
-  var nav = p.document.createElement('div');
-  nav.id = 'reclama-nav';
-  nav.style.cssText = [
-    'position:fixed', 'bottom:0', 'left:0', 'right:0',
-    'background:white', 'border-top:2px solid #e8eeff',
-    'box-shadow:0 -4px 20px rgba(30,86,219,0.13)',
-    'display:flex', 'align-items:stretch',
-    'padding:6px 6px 14px 6px', 'gap:4px',
-    'z-index:99999', 'font-family:Nunito,sans-serif'
-  ].join(';');
-
-  var items = [
-    {{id:'reclamacao', icon:'📝', label:'Reclamar',      ativo:{ativo_r}}},
-    {{id:'forum',      icon:'💬', label:'Fórum',         ativo:{ativo_f}}},
-    {{id:'minhas',     icon:'🔍', label:'Meus Chamados', ativo:{ativo_m}}},
-  ];
-
-  items.forEach(function(item) {{
-    var btn = p.document.createElement('button');
-    btn.style.cssText = [
-      'flex:1', 'display:flex', 'flex-direction:column',
-      'align-items:center', 'justify-content:center',
-      'gap:2px', 'padding:6px 4px',
-      'border-radius:12px', 'border:none', 'cursor:pointer',
-      'font-family:Nunito,sans-serif',
-      'font-size:0.65rem', 'font-weight:900',
-      'line-height:1.2', 'transition:background .15s,color .15s',
-      item.ativo
-        ? 'background:#eef2ff;color:#1a56db;'
-        : 'background:transparent;color:#94a3b8;'
-    ].join(';');
-
-    btn.innerHTML =
-      '<span style="font-size:1.35rem;line-height:1;display:block">' + item.icon + '</span>' +
-      '<span>' + item.label + '</span>';
-
-    btn.addEventListener('click', function() {{
-      p.location.href = p.location.pathname + '?nav=' + item.id;
-    }});
-    btn.addEventListener('touchstart', function(e) {{
-      btn.style.background = '#eef2ff';
-      btn.style.color = '#1a56db';
-    }}, {{passive:true}});
-
-    nav.appendChild(btn);
-  }});
-
-  p.document.body.appendChild(nav);
-}})();
-</script>
-""", height=0)
-
-# Lê param da URL → troca aba
-params = st.query_params
-if "nav" in params:
-    nova = params["nav"]
-    if nova != st.session_state.aba_ativa:
-        st.session_state.aba_ativa   = nova
-        st.session_state.rec_detalhe = None
-        st.query_params.clear()
-        st.rerun()
+st.markdown('<div class="app-header"><h1>🚌 Reclama no Ponto</h1><p>Transporte público de Florianópolis</p></div>', unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════
-# ABA 1 — RECLAMAÇÃO
+# TABS — navegação nativa do Streamlit (100% funcional)
 # ════════════════════════════════════════════════════════
-if aba == "reclamacao":
-    st.markdown('<div class="app-header"><h1>🚌 Reclama no Ponto</h1><p>Relate problemas no transporte público</p></div>', unsafe_allow_html=True)
+tab1, tab2, tab3 = st.tabs(["📝  Reclamar", "💬  Fórum", "🔍  Meus Chamados"])
 
+# ════════════════════════════════════════════════════════
+# TAB 1 — RECLAMAÇÃO
+# ════════════════════════════════════════════════════════
+with tab1:
     st.markdown('<div class="secao"><div class="secao-titulo">1 · Tipo do problema</div>', unsafe_allow_html=True)
     escolha_cat = st.selectbox("Categoria:", list(categorias.keys()), key="sel_cat", label_visibility="collapsed")
     ic = categorias[escolha_cat]
@@ -286,15 +194,15 @@ if aba == "reclamacao":
     st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="secao"><div class="secao-titulo">3 · Detalhes</div>', unsafe_allow_html=True)
-    placa     = st.text_input("Placa do Ônibus (Opcional):", placeholder="Ex: ABC-1234", key="inp_placa")
+    placa     = st.text_input("Placa (Opcional):", placeholder="Ex: ABC-1234", key="inp_placa")
     descricao = st.text_area("Descrição:", placeholder="Descreva o que aconteceu...", height=95, key="inp_desc")
-    st.file_uploader("Foto (Opcional):", key="inp_foto", label_visibility="collapsed")
+    st.file_uploader("📎 Foto (Opcional):", key="inp_foto", label_visibility="visible")
     st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="btn-enviar">', unsafe_allow_html=True)
     if st.button("🚀  ENVIAR RECLAMAÇÃO", key="btn_enviar"):
         if not descricao:
-            st.warning("⚠️ Por favor, descreva o problema antes de enviar.")
+            st.warning("⚠️ Descreva o problema antes de enviar.")
         else:
             novo_p = f"#RP-2026-{len(st.session_state.minhas_reclamacoes)+1:03d}"
             st.session_state.minhas_reclamacoes.append({
@@ -307,11 +215,10 @@ if aba == "reclamacao":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════
-# ABA 2 — FÓRUM
+# TAB 2 — FÓRUM
 # ════════════════════════════════════════════════════════
-elif aba == "forum":
-    st.markdown("<h3>💬 Fórum da Comunidade</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center;color:#64748b;font-size:.88rem;'>Apoie ou comente ocorrências de outros usuários</p>", unsafe_allow_html=True)
+with tab2:
+    st.markdown("<p style='text-align:center;color:#64748b;font-size:.88rem;margin-bottom:14px;'>Apoie ou comente ocorrências de outros usuários</p>", unsafe_allow_html=True)
 
     for post in FORUM_POSTS:
         pid      = post["id"]
@@ -329,13 +236,13 @@ elif aba == "forum":
 
         ca, cb = st.columns(2)
         with ca:
-            txt_a = f"👍 Apoiar ({apoios})" if apoios else "👍 Apoiar"
-            if st.button(txt_a, key=f"apoio_{pid}", use_container_width=True):
+            lbl_a = f"👍 Apoiar ({apoios})" if apoios else "👍 Apoiar"
+            if st.button(lbl_a, key=f"apoio_{pid}", use_container_width=True):
                 st.session_state.forum_apoios[pid] = apoios + 1
                 st.rerun()
         with cb:
-            txt_c = f"💬 Ver ({len(coments)})" if coments else "💬 Comentar"
-            if st.button(txt_c, key=f"toggle_{pid}", use_container_width=True):
+            lbl_c = f"💬 Ver ({len(coments)})" if coments else "💬 Comentar"
+            if st.button(lbl_c, key=f"toggle_{pid}", use_container_width=True):
                 st.session_state.forum_expandido = None if expandido else pid
                 st.rerun()
 
@@ -345,17 +252,16 @@ elif aba == "forum":
             novo_c = st.text_input("Comentário:", key=f"inp_c_{pid}", placeholder="Escreva aqui...", label_visibility="collapsed")
             if st.button("✉️ Enviar comentário", key=f"send_c_{pid}"):
                 if novo_c.strip():
-                    if pid not in st.session_state.forum_coments:
-                        st.session_state.forum_coments[pid] = []
-                    st.session_state.forum_coments[pid].append({"autor":"Você","texto":novo_c.strip()})
+                    st.session_state.forum_coments.setdefault(pid, []).append({"autor":"Você","texto":novo_c.strip()})
                     st.session_state.forum_expandido = pid
                     st.rerun()
-        st.markdown("<div style='height:2px'></div>", unsafe_allow_html=True)
+
+        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════
-# ABA 3 — MINHAS RECLAMAÇÕES
+# TAB 3 — MEUS CHAMADOS
 # ════════════════════════════════════════════════════════
-else:
+with tab3:
     if st.session_state.rec_detalhe is not None:
         idx = st.session_state.rec_detalhe
         rec = st.session_state.minhas_reclamacoes[idx]
@@ -363,7 +269,7 @@ else:
         grupo_curto = rec.get('grupo','').split("(")[0].strip()
 
         st.markdown('<div class="btn-voltar">', unsafe_allow_html=True)
-        if st.button("← Voltar", key="btn_voltar"):
+        if st.button("← Voltar para Meus Chamados", key="btn_voltar"):
             st.session_state.rec_detalhe = None
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
@@ -382,7 +288,7 @@ else:
         st.markdown(f"""
         <div class="detalhe-box">
             <div style="font-size:.72rem;font-weight:900;color:#94a3b8;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">📋 Detalhes</div>
-            {'<div style="font-size:.88rem;font-weight:700;color:#64748b;margin-bottom:7px;">🚗 Placa: '+rec['placa']+'</div>' if rec.get('placa') else ''}
+            {'<div style="font-size:.88rem;font-weight:700;color:#64748b;margin-bottom:7px;">🚗 Placa: ' + rec['placa'] + '</div>' if rec.get('placa') else ''}
             <div style="font-size:.92rem;color:#334155;font-weight:600;line-height:1.6;">{rec.get('descricao','—')}</div>
         </div>""", unsafe_allow_html=True)
 
@@ -394,11 +300,10 @@ else:
                 <div style="font-size:.92rem;color:#065f46;font-weight:600;line-height:1.6;">{resposta}</div>
             </div>""", unsafe_allow_html=True)
         else:
-            st.markdown('<div style="background:#fafafa;border-radius:12px;padding:14px;margin-top:12px;border:1px dashed #cbd5e1;text-align:center;"><div style="font-size:.85rem;color:#94a3b8;font-weight:700;">⏳ Aguardando resposta da empresa</div></div>', unsafe_allow_html=True)
+            st.markdown('<div style="background:#fafafa;border-radius:12px;padding:14px;margin-top:12px;border:1px dashed #cbd5e1;text-align:center;"><span style="font-size:.85rem;color:#94a3b8;font-weight:700;">⏳ Aguardando resposta da empresa</span></div>', unsafe_allow_html=True)
 
     else:
-        st.markdown("<h3>🔍 Meus Chamados</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align:center;color:#64748b;font-size:.88rem;'>Toque para ver os detalhes de cada chamado</p>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center;color:#64748b;font-size:.88rem;margin-bottom:14px;'>Toque para ver os detalhes de cada chamado</p>", unsafe_allow_html=True)
 
         if not st.session_state.minhas_reclamacoes:
             st.markdown('<div class="card" style="text-align:center;padding:32px;"><div style="font-size:2.8rem;">📭</div><p style="color:#64748b;margin-top:10px;">Nenhuma reclamação ainda.</p></div>', unsafe_allow_html=True)
